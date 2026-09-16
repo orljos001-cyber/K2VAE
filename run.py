@@ -3,7 +3,7 @@ import torch
 import logging
 from probts.data import ProbTSDataModule
 from probts.model.forecast_module import ProbTSForecastModule
-from probts.callbacks import MemoryCallback, TimeCallback
+from probts.callbacks import MemoryCallback, TimeCallback, K2VAEDiagnosticsCallback
 from probts.utils import find_best_epoch
 from lightning.pytorch.cli import LightningCLI
 from lightning.pytorch.loggers import CSVLogger, TensorBoardLogger
@@ -108,10 +108,16 @@ class ProbTSCli(LightningCLI):
         # Set callbacks
         self.memory_callback = MemoryCallback()
         self.time_callback = TimeCallback()
-        
+        # No-ops for every forecaster except k2VAEModel (see
+        # K2VAEDiagnosticsCallback.on_fit_start), safe to always include.
+        self.k2vae_diagnostics_callback = K2VAEDiagnosticsCallback(
+            output_dir=f'{self.save_dict}/diagnostics'
+        )
+
         callbacks = [
             self.memory_callback,
-            self.time_callback
+            self.time_callback,
+            self.k2vae_diagnostics_callback
         ]
         
         if not self.model.forecaster.no_training:

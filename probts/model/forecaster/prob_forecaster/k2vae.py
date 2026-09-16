@@ -134,6 +134,19 @@ class k2VAEModel(Forecaster):
         weight_alpha = 1 if post_loss < threshold else 0
         # stabilize training process
         loss = rec_loss + weight_alpha * post_loss + self.weight_beta * kld_loss
+
+        # Side-channel for K2VAEDiagnosticsCallback: exposes the same
+        # rec/nll/kl breakdown as the thesis repo's elbo.total_loss(),
+        # without changing this method's return contract (
+        # ProbTSForecastModule.training_forward expects a bare loss tensor
+        # and is shared by every forecaster in this repo).
+        self.last_loss_components = {
+            "total": loss.detach(),
+            "rec": rec_loss.detach(),
+            "nll": post_loss.detach(),
+            "kl": kld_loss.detach(),
+        }
+
         return loss
 
     def sample_from_distribution(self, input, num_samples):

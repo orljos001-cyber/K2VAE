@@ -1,2 +1,3 @@
 from .memory_callback import MemoryCallback
 from .time_callback import TimeCallback
+from .k2vae_diagnostics_callback import K2VAEDiagnosticsCallback
