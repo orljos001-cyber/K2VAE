@@ -127,17 +127,22 @@ def save_exp_summary(pl_module, inference=False):
     
     
 def save_csv(model_args,save_dict, model, context_length):
-    if len(model.avg_hor_metrics) > 0:
+    avg_hor_metrics = getattr(model, "avg_hor_metrics", {})
+    avg_metrics = getattr(model, "avg_metrics", {})
+    if len(avg_hor_metrics) > 0:
         horizon_list = []
-        for horizon in model.avg_hor_metrics:
-            horizon_dict = model.avg_hor_metrics[str(horizon)]
+        for horizon in avg_hor_metrics:
+            horizon_dict = avg_hor_metrics[str(horizon)]
             horizon_dict['horizon'] = horizon
             horizon_list.append(horizon_dict)
             
         df = pd.DataFrame(horizon_list)
         
+    elif len(avg_metrics) > 0:
+        df = pd.DataFrame([avg_metrics])
     else:
-        df = pd.DataFrame([model.avg_metrics])
+        print("No test metrics found; skipping horizons result CSV.")
+        return
 
     df['model_args'] = model_args
     df = df[['model_args'] + df.columns[:-1].tolist()]

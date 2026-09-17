@@ -1,4 +1,5 @@
 import os
+import sys
 import torch
 import logging
 from probts.data import ProbTSDataModule
@@ -167,29 +168,40 @@ class ProbTSCli(LightningCLI):
 
         if not self.model.forecaster.no_training:
             self.ckpt = self.checkpoint_callback.best_model_path
-            log.info(f"Loading best checkpoint from {self.ckpt}")
-            self.model = ProbTSForecastModule.load_from_checkpoint(
-                self.ckpt, 
-                scaler=self.datamodule.data_manager.scaler,
-                context_length=self.datamodule.data_manager.context_length,
-                target_dim=self.datamodule.data_manager.target_dim,
-                freq=self.datamodule.data_manager.freq,
-                prediction_length=self.datamodule.data_manager.prediction_length,
-                lags_list=self.datamodule.data_manager.lags_list,
-                time_feat_dim=self.datamodule.data_manager.time_feat_dim,
-                sampling_weight_scheme=self.model.sampling_weight_scheme,
-            )
+            if self.ckpt:
+                log.info(f"Loading best checkpoint from {self.ckpt}")
+                self.model = ProbTSForecastModule.load_from_checkpoint(
+                    self.ckpt, 
+                    scaler=self.datamodule.data_manager.scaler,
+                    context_length=self.datamodule.data_manager.context_length,
+                    target_dim=self.datamodule.data_manager.target_dim,
+                    freq=self.datamodule.data_manager.freq,
+                    prediction_length=self.datamodule.data_manager.prediction_length,
+                    lags_list=self.datamodule.data_manager.lags_list,
+                    time_feat_dim=self.datamodule.data_manager.time_feat_dim,
+                    sampling_weight_scheme=self.model.sampling_weight_scheme,
+                )
+            else:
+                log.info("No checkpoint found; testing with the current model state.")
 
-    def run(self):
+    def fit(self):
         self.init_exp()
-        
+
         if not self.model.forecaster.no_training:
             self.set_fit_mode()
             if self.datamodule.dataset_val is None:  # if the validation set is empty
                 self.trainer.fit(model=self.model, train_dataloaders=self.datamodule.train_dataloader())
             else:
                 self.trainer.fit(model=self.model, datamodule=self.datamodule)
-            
+
+            save_exp_summary(self, inference=False)
+        else:
+            log.info("Forecaster is configured for inference only; skipping fit.")
+
+    def run(self):
+        self.fit()
+
+        if not self.model.forecaster.no_training:
             inference=False
         else:
             inference=True
@@ -207,10 +219,18 @@ class ProbTSCli(LightningCLI):
 
 
 if __name__ == '__main__':
+    command = "run"
+    if len(sys.argv) > 1 and sys.argv[1] in {"fit", "train"}:
+        command = "fit"
+        sys.argv.pop(1)
+
     cli = ProbTSCli(
         datamodule_class=ProbTSDataModule,
         model_class=ProbTSForecastModule,
         save_config_kwargs={"overwrite": True},
         run=False
     )
-    cli.run()
+    if command == "fit":
+        cli.fit()
+    else:
+        cli.run()

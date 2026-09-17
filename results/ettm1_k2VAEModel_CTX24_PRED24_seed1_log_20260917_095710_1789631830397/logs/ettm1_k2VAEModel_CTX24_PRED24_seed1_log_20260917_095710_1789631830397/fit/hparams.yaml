@@ -1,0 +1,127 @@
+_instantiator: lightning.pytorch.cli.instantiate_module
+batch_size: 64
+data_manager:
+  class_path: probts.DataManager
+  init_args:
+    auto_search: false
+    context_length: 24
+    context_length_factor: 1
+    continuous_sample: false
+    data_path: null
+    dataset: ettm1
+    freq: null
+    history_length: null
+    multivariate: true
+    path: ./datasets
+    prediction_length: 24
+    scaler: standard
+    split_val: true
+    test_ratio: 0.2
+    test_rolling_length: 96
+    timeenc: 1
+    train_ctx_len: null
+    train_pred_len_list: null
+    train_ratio: 0.7
+    val_ctx_len: null
+    val_pred_len_list: null
+    var_specific_norm: true
+forecaster:
+  class_path: probts.model.forecaster.prob_forecaster.k2vae.k2VAEModel
+  init_args:
+    activation: relu
+    autoregressive: false
+    context_length: 24
+    d_ff: 256
+    d_model: 128
+    dataset: ettm1
+    dropout: 0.1
+    dynamic_dim: 128
+    e_layers: 1
+    factor: 3
+    feat_idx_emb_dim: 1
+    freq: min
+    global_mean: !!python/object/apply:torch._utils._rebuild_tensor_v2
+    - !!python/object/apply:torch.storage._load_from_bytes
+      - !!binary |
+        gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+        AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+        aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+        Z2UKcQFYDQAAADE5NjE2NDMzMTE5MDRxAlgDAAAAY3B1cQNLB050cQRRLoACXXEAWA0AAAAxOTYx
+        NjQzMzExOTA0cQFhLgcAAAAAAAAAMa7/QNh6AkCIhKNA6JdBPz6AM0Ari0o/5f+IQQ==
+    - 0
+    - !!python/tuple
+      - 7
+    - !!python/tuple
+      - 1
+    - false
+    - !!python/object/apply:collections.OrderedDict
+      - []
+    hidden_dim: 256
+    hidden_layers: 2
+    history_length: 25
+    init_kalman: randn
+    init_koopman: dynamic
+    lags_list:
+    - 1
+    multistep: true
+    n_heads: 8
+    no_training: false
+    patch_len: 8
+    prediction_length: 24
+    sample_schedule: 10
+    target_dim: 7
+    time_feat_dim: 5
+    train_pred_len_list: &id001
+    - 24
+    use_feat_idx_emb: false
+    use_lags: false
+    use_scaling: false
+    use_time_feat: false
+    weight_beta: 0.01
+learning_rate: 0.001
+load_from_ckpt: null
+lr_scheduler_config: null
+num_samples: 100
+num_workers: 0
+optimizer_config: null
+quantiles_num: 20
+sampling_weight_scheme: none
+scaler: !!python/object:probts.data.data_utils.data_scaler.StandardScaler
+  epsilon: 1.0e-09
+  mean: !!python/object/apply:torch._utils._rebuild_tensor_v2
+  - !!python/object/apply:torch.storage._load_from_bytes
+    - !!binary |
+      gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+      AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+      aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApEb3VibGVTdG9y
+      YWdlCnEBWA0AAAAxOTYxNjQzMzIwMTkycQJYAwAAAGNwdXEDSwdOdHEEUS6AAl1xAFgNAAAAMTk2
+      MTY0MzMyMDE5MnEBYS4HAAAAAAAAACh9HhjG9R9Aboq1AVtPAEB393X7kHAUQOQ4XgP9Mug/TjF/
+      pQdwBkC4KbhZZVHpP2p4P738HzFA
+  - 0
+  - !!python/tuple
+    - 7
+  - !!python/tuple
+    - 1
+  - false
+  - !!python/object/apply:collections.OrderedDict
+    - []
+  scale: !!python/object/apply:torch._utils._rebuild_tensor_v2
+  - !!python/object/apply:torch.storage._load_from_bytes
+    - !!binary |
+      gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+      AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+      aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApEb3VibGVTdG9y
+      YWdlCnEBWA0AAAAxOTYxNjQzMzI2MDE2cQJYAwAAAGNwdXEDSwdOdHEEUS6AAl1xAFgNAAAAMTk2
+      MTY0MzMyNjAxNnEBYS4HAAAAAAAAABRSIV4sVRdA6TsXA6i3AECkJqHdlBMWQDH520t6yf4/SXbL
+      yyum8D/10rNSCj3kP7LdfnmpWCJA
+  - 0
+  - !!python/tuple
+    - 7
+  - !!python/tuple
+    - 1
+  - false
+  - !!python/object/apply:collections.OrderedDict
+    - []
+  var_specific: true
+test_batch_size: 32
+train_pred_len_list: *id001

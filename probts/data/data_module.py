@@ -34,6 +34,10 @@ class ProbTSDataModule(pl.LightningDataModule):
         self.dataset_val = self.data_manager.val_iter_dataset
         self.dataset_test = self.data_manager.test_iter_dataset
 
+    @property
+    def persistent_workers(self):
+        return self.num_workers > 0
+
     def train_dataloader(self):
         if self.data_manager.multi_hor:
                 return DataLoader(
@@ -48,7 +52,7 @@ class ProbTSDataModule(pl.LightningDataModule):
                 self.dataset_train,
                 batch_size=self.batch_size,
                 num_workers=self.num_workers,
-                persistent_workers=True,
+                persistent_workers=self.persistent_workers,
                 pin_memory=True
             )
 
@@ -60,14 +64,24 @@ class ProbTSDataModule(pl.LightningDataModule):
         if self.data_manager.multi_hor:
             val_dataloader = self.combine_dataloader(self.dataset_val)
         else:
-            val_dataloader = DataLoader(self.dataset_val, batch_size=self.test_batch_size, num_workers=1)
+            val_dataloader = DataLoader(
+                self.dataset_val,
+                batch_size=self.test_batch_size,
+                num_workers=self.num_workers,
+                persistent_workers=self.persistent_workers,
+            )
         return val_dataloader
 
     def test_dataloader(self):
         if self.data_manager.multi_hor:
             return self.combine_dataloader(self.dataset_test)
         else:
-            return DataLoader(self.dataset_test, batch_size=self.test_batch_size, num_workers=1)
+            return DataLoader(
+                self.dataset_test,
+                batch_size=self.test_batch_size,
+                num_workers=self.num_workers,
+                persistent_workers=self.persistent_workers,
+            )
 
     def predict_dataloader(self):
         return DataLoader(self.dataset_test, batch_size=self.test_batch_size, num_workers=0)
