@@ -1,4 +1,5 @@
 import logging
+import json
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -133,6 +134,10 @@ class K2VAEDiagnosticsCallback(Callback):
         if not self._enabled:
             return
         manager = PlotManager(cfg=self.plot_config, run_id=self.run_id, output_root=self.output_dir)
+        (manager.out_dir / "history.json").write_text(
+            json.dumps({"train": self._train_history, "validation": self._val_history}, indent=2),
+            encoding="utf-8",
+        )
 
         if self._train_history:
             loss_figs = manager.plot_reference_loss_curves(self._build_history())

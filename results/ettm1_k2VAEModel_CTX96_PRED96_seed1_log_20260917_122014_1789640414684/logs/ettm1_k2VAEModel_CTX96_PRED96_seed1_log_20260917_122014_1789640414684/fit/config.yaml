@@ -1,0 +1,110 @@
+# lightning.pytorch==2.7.0.dev
+seed_everything: 1
+trainer:
+  accelerator: gpu
+  strategy: auto
+  devices: 1
+  num_nodes: 1
+  precision: null
+  logger: null
+  callbacks: null
+  fast_dev_run: false
+  max_epochs: 50
+  min_epochs: null
+  max_steps: -1
+  min_steps: null
+  max_time: null
+  limit_train_batches: 100.0
+  limit_val_batches: null
+  limit_test_batches: null
+  limit_predict_batches: null
+  overfit_batches: 0.0
+  val_check_interval: null
+  check_val_every_n_epoch: 1
+  num_sanity_val_steps: null
+  log_every_n_steps: 1
+  enable_checkpointing: null
+  enable_progress_bar: false
+  enable_model_summary: null
+  accumulate_grad_batches: 1
+  gradient_clip_val: 0.5
+  gradient_clip_algorithm: null
+  deterministic: null
+  benchmark: null
+  inference_mode: true
+  use_distributed_sampler: false
+  profiler: null
+  detect_anomaly: false
+  barebones: false
+  plugins: null
+  sync_batchnorm: false
+  reload_dataloaders_every_n_epochs: 0
+  default_root_dir: ./results
+  enable_autolog_hparams: true
+  model_registry: null
+  suggest_integrations: true
+model:
+  forecaster:
+    class_path: probts.model.forecaster.prob_forecaster.k2vae.k2VAEModel
+    init_args:
+      d_model: 128
+      d_ff: 256
+      e_layers: 1
+      dropout: 0.1
+      activation: relu
+      n_heads: 4
+      factor: 3
+      patch_len: 24
+      multistep: true
+      dynamic_dim: 128
+      hidden_layers: 3
+      hidden_dim: 256
+      weight_beta: 0.01
+      sample_schedule: 20
+      init_kalman: identity
+      init_koopman: dynamic
+      use_lags: false
+      use_feat_idx_emb: false
+      use_time_feat: false
+      feat_idx_emb_dim: 1
+      use_scaling: false
+      autoregressive: false
+      no_training: false
+  num_samples: 100
+  learning_rate: 0.001
+  quantiles_num: 20
+  load_from_ckpt: null
+  sampling_weight_scheme: none
+  optimizer_config: null
+  lr_scheduler_config: null
+data:
+  data_manager:
+    class_path: probts.DataManager
+    init_args:
+      dataset: ettm1
+      path: ./datasets
+      history_length: null
+      context_length: 96
+      prediction_length: 96
+      train_ctx_len: null
+      train_pred_len_list: null
+      val_ctx_len: null
+      val_pred_len_list: null
+      test_rolling_length: 96
+      split_val: true
+      scaler: standard
+      context_length_factor: 1
+      timeenc: 1
+      var_specific_norm: true
+      data_path: null
+      freq: null
+      multivariate: true
+      continuous_sample: false
+      train_ratio: 0.7
+      test_ratio: 0.2
+      auto_search: false
+  batch_size: 64
+  test_batch_size: 32
+  num_workers: 0
+optimizer: null
+lr_scheduler: null

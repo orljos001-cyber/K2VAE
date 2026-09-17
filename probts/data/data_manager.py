@@ -8,7 +8,6 @@ from gluonts.dataset.multivariate_grouper import MultivariateGrouper
 from probts.data.data_utils.get_datasets import get_dataset_info, get_dataset_borders, load_dataset
 from probts.data.datasets.single_horizon_datasets import SingleHorizonDataset
 from probts.data.datasets.multi_horizon_datasets import MultiHorizonDataset
-from probts.data.datasets.gift_eval_datasets import GiftEvalDataset
 
 from probts.data.data_utils.time_features import get_lags
 from probts.data.data_utils.data_utils import split_train_val, truncate_test, get_rolling_test, df_to_mvds
@@ -173,6 +172,8 @@ class DataManager:
         return IdentityScaler()
     
     def _load_gift_eval_dataset(self):
+        from probts.data.datasets.gift_eval_datasets import GiftEvalDataset
+
         parts = self.dataset[5:].split('/')  # Remove first 'gift/'
         self.dataset = '/'.join(parts[:-1])  # Join all parts except last one with '/'
         gift_term = parts[-1] # corresponding to "term" parameter in GiftEvalDataset

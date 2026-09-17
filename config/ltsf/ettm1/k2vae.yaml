@@ -38,8 +38,11 @@ data:
   data_manager:
     class_path: probts.data.data_manager.DataManager
     init_args:
+      dataset: ettm1
       split_val: true
       scaler: standard # identity, standard, temporal
+      context_length: 96
+      prediction_length: 96
   batch_size: 64
   test_batch_size: 32
   num_workers: 8

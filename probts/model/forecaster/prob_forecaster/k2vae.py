@@ -134,6 +134,12 @@ class k2VAEModel(Forecaster):
         weight_alpha = 1 if post_loss < threshold else 0
         # stabilize training process
         loss = rec_loss + weight_alpha * post_loss + self.weight_beta * kld_loss
+        self.last_loss_components = {
+            "total": loss.detach(),
+            "rec": rec_loss.detach(),
+            "nll": post_loss.detach(),
+            "kl": kld_loss.detach(),
+        }
         return loss
 
     def sample_from_distribution(self, input, num_samples):
